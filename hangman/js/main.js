@@ -3,7 +3,11 @@
 var GameState = {
 
 	preload:function() {
-		this.game.load.image('sun','images/sun.png');
+		this.zz = 0;
+		this.misses = 0;
+		this.lettersGuessed = [' '];
+
+		this.game.load.image('sun','images/placeholder.jpg');
 		this.game.load.text('words','words/words.txt');
 },
 
@@ -18,7 +22,11 @@ var GameState = {
 		this.sun.inputEnabled = true;
 		this.sun.events.onInputDown.add(this.testing, this);
 		this.secretCharacters = this.secretWord.split('');
-		
+		this.display = [];
+		this.displayObj = this.game.add.text(this.game.world.centerX,this.game.world.centerY,'');
+		this.displayObj.anchor.setTo(0.5);
+		for(i = 0; i < this.secretCharacters.length; i++)
+			this.display[i] = '_';
 		console.log('create');
 
 		game.input.keyboard.addCallbacks(this, null, null, this.keyPress);
@@ -28,10 +36,27 @@ var GameState = {
 
 },
 	keyPress:function(char) {
-		var misses = 0;
-		
-		console.log(this.secretCharacters[1]);
-
+		var AlreadyGuessed = false;
+		var hit = false;
+		char = char.toUpperCase();
+		console.log(this.lettersGuessed);
+		for(characters = 0; characters < this.lettersGuessed.length; characters++){
+			if (char == this.lettersGuessed[characters]){
+				AlreadyGuessed = true;
+				console.log('Already guessed!');
+			}
+			else{
+				this.lettersGuessed[this.zz] = char;
+				this.zz += 1;
+			}
+		}			
+		if(AlreadyGuessed == false){
+			for (i = 0; i < this.secretCharacters.length; i++){
+				if(this.secretCharacters[i] == char){
+					this.display[i] = char;	
+				}	
+			}
+		}
 		console.log(char.toUpperCase());
 		for(i = 1; i < this.secretCharacters.length; i++){
 			if(char.toUpperCase() == this.secretCharacters[i]){
@@ -50,7 +75,21 @@ var GameState = {
 	},
 
 	testing:function(){
+		this.displayText();
 		console.log('click');	
+	},
+	displayText:function(){
+		var currentDisplay = '';
+		//Make a string of the 'display' arrary, then clear the previous display, and update
+		console.log(this.display);
+		for(i = 1; i < this.display.length; i++){
+			currentDisplay = currentDisplay.concat(this.display[i]);			
+		}	
+		this.displayObj.text = currentDisplay;
+		console.log(currentDisplay);
+		
+		
+			
 	}
 
 }
