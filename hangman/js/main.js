@@ -12,37 +12,42 @@ var GameState = {
 },
 
 	create:function() {
-<<<<<<< HEAD
-		
+		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";	
+		this.hand = this.alphabet.split('');
 		this.secretWord = this.pickAWord();	
 		this.secretCharacters = this.secretWord.split('');
+
+		this.secretCharacters.splice(0, 1);
+		console.log(this.secretCharacters);
 		//This makes an interactiable placeholder
-=======
 		x = Math.floor(Math.random()*83667);
 		var text = game.cache.getText('words');	
 		//console.log(text[3]);
 		var words = text.split(' ');
 		console.log(words[x]);
 		this.secretWord = words[x]
->>>>>>> 04687ec0ba75b0ee56ecfb459dea6e45919224fb
 		this.sun= this.game.add.sprite(0,0,'sun');
 		this.sun.inputEnabled = true;
 		this.sun.events.onInputDown.add(this.testing, this);
 		//this.gessedLetters = ['A', 'B', 'C'];
 		console.log(this.gessedLetters);
-		this.displayWord();
+		this.displayArray = this.displayWord();
+		this.showWord();
+		this.showHand();
+		
 		//Overshoots by 1?
 		//Seems to work for the moment.
 		//Needs to actually display text on screen though
 		
-		this.display = [];
-		this.displayObj = this.game.add.text(this.game.world.centerX,this.game.world.centerY,'');
-		this.displayObj.anchor.setTo(0.5);
-		for(i = 0; i < this.secretCharacters.length; i++)
-			this.display[i] = '_';
+		//this.display = [];
+		//this.displayObj = this.game.add.text(this.game.world.centerX,this.game.world.centerY,'');
+		//Not sure if I should keep this or not?
+		//this.displayObj.anchor.setTo(0.5);
+		//for(i = 0; i < this.secretCharacters.length; i++)
+		//	this.display[i] = '_';
 		//console.log('create');
 
-		game.input.keyboard.addCallbacks(this, null, null, this.keyPress);
+		game.input.keyboard.addCallbacks(this, null, null, this.GameStart);
 },
 	pickAWord:function(){
 		//Splits dictionary by ' ' and picks a random word, returns that word
@@ -61,7 +66,10 @@ var GameState = {
 			//ifguessedletter indexOf secret character > 1A
 			//syntax is a little odd, check note
 			console.log(guessedLetters);
-			if (guessedLetters.indexOf(this.secretCharacters[i]) > 0){
+			if (guessedLetters.indexOf(this.secretCharacters[i]) >=  0){
+				//debugger;
+				console.log(' ');
+				console.log(guessedLetters.indexOf(this.secretCharacters[i]));
 				this.returnWord[i] = this.secretCharacters[i];
 			}
 			else{
@@ -70,6 +78,7 @@ var GameState = {
 		}
 		console.log(this.returnWord);
 		console.log(this.secretCharacters);
+		return(this.returnWord);
 
 },
 
@@ -122,6 +131,15 @@ var GameState = {
 		}
 	},
 
+	showWord:function(){
+		// Ideally this would seperate out each idividual letter, for animation, will test this
+		// later, there probably is some group aligment function, search docs
+		this.s = this.displayArray.join(''); 
+		this.game.add.text(this.game.world.centerX, this.game.world.centerY, this.s);
+		this.s.anchor.setTo(0.5);
+			
+	},
+
 	testing:function(){
 		this.displayText();
 		//console.log('click');	
@@ -138,12 +156,21 @@ var GameState = {
 		
 		
 			
+	},
+	showHand:function(){
+	//Need something like... take the number of objects and object.width's sum
+		//if that sum is greater than the acceptiable range for 1 row, check for 2 rows and then 3
+		//In an individual row, take the sum and divide it between the world.length
+		//to get the begining coridinate, then iterate over placing each element according to 
+		//spacing
+		//Need to find proper spacing and bitmap font
+		
 	}
 
 }
 var config = {
-	width: 800,
-	height: 600,
+	width: 1280,
+	height: 720,
 	renderer: Phaser.AUTO,
 	backgroundColor:'#fff000'
 }
