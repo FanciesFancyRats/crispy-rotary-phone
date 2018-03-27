@@ -1,27 +1,30 @@
-
+guessedLetters = ['A', 'B', 'C'];
 
 var GameState = {
 
 	preload:function() {
 		this.zz = 0;
 		this.misses = 0;
-		this.lettersGuessed = [' '];
 
 		this.game.load.image('sun','images/placeholder.jpg');
 		this.game.load.text('words','words/words.txt');
 },
 
 	create:function() {
-		x = Math.floor(Math.random()*83667);
-		var text = game.cache.getText('words');	
-		console.log(text[3]);
-		var words = text.split(' ');
-		console.log(words[x]);
-		this.secretWord = words[x]
+		
+		this.secretWord = this.pickAWord();	
+		this.secretCharacters = this.secretWord.split('');
+		//This makes an interactiable placeholder
 		this.sun= this.game.add.sprite(0,0,'sun');
 		this.sun.inputEnabled = true;
 		this.sun.events.onInputDown.add(this.testing, this);
-		this.secretCharacters = this.secretWord.split('');
+		//this.gessedLetters = ['A', 'B', 'C'];
+		console.log(this.gessedLetters);
+		this.displayWord();
+		//Overshoots by 1?
+		//Seems to work for the moment.
+		//Needs to actually display text on screen though
+		
 		this.display = [];
 		this.displayObj = this.game.add.text(this.game.world.centerX,this.game.world.centerY,'');
 		this.displayObj.anchor.setTo(0.5);
@@ -30,6 +33,34 @@ var GameState = {
 		console.log('create');
 
 		game.input.keyboard.addCallbacks(this, null, null, this.keyPress);
+},
+	pickAWord:function(){
+		//Splits dictionary by ' ' and picks a random word, returns that word
+		x = Math.floor(Math.random()*83667);
+		var rawText = game.cache.getText('words');
+		var words = rawText.split(' ');
+		var secretWord = words[x];
+		return(secretWord);
+
+},
+	displayWord:function(){
+		console.log(guessedLetters);
+		//updates the display, assumes everything is correct
+		this.returnWord = [];
+		for(i=0;i<this.secretCharacters.length;i++){
+			//ifguessedletter indexOf secret character > 1A
+			//syntax is a little odd, check note
+			console.log(guessedLetters);
+			if (guessedLetters.indexOf(this.secretCharacters[i]) > 0){
+				this.returnWord[i] = this.secretCharacters[i];
+			}
+			else{
+				this.returnWord[i] = "_";	
+			}
+		}
+		console.log(this.returnWord);
+		console.log(this.secretCharacters);
+
 },
 
 	update:function() {
