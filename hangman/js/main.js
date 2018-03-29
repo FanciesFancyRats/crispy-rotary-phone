@@ -9,6 +9,7 @@ var GameState = {
 
 		this.game.load.image('sun','images/placeholder.jpg');
 		this.game.load.text('words','words/words.txt');
+		this.game.load.image('item', 'images/item.png');
 },
 
 	create:function() {
@@ -134,14 +135,15 @@ var GameState = {
 	showWord:function(){
 		// Ideally this would seperate out each idividual letter, for animation, will test this
 		// later, there probably is some group aligment function, search docs
+		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, '');
 		this.s = this.displayArray.join(''); 
-		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY, this.s);
+		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, this.s);
 		this.displayString.anchor.setTo(0.5);
 	},
 
 	testing:function(){
-		this.displayText();
-		//console.log('click');	
+		//this.displayText();
+		console.log('click');	
 	},
 	displayText:function(){
 		var currentDisplay = '';
@@ -157,19 +159,31 @@ var GameState = {
 			
 	},
 	showHand:function(){
-	//Need something like... take the number of objects and object.width's sum
-		//if that sum is greater than the acceptiable range for 1 row, check for 2 rows and then 3
-		//In an individual row, take the sum and divide it between the world.length
-		//to get the begining coridinate, then iterate over placing each element according to 
-		//spacing
-		//Need to find proper spacing and bitmap font
 		console.log(this.hand);
-		this.graphics = game.add.graphics(0,0);
+		items = game.add.group();
+		var item;
 		for (i = 0; i < this.hand.length; i++){
-		this.graphics.beginFill(0xff0000);
-		this.block = this.graphics.drawRect((100 + (i*20)), 100, 100, 100);
-		this.graphics.endFill();
+			item = items.create(0, 0, 'item');
+			item.name = 'block' + i;
+			item.letter = this.hand[i]; 
+			item.anchor.setTo(0.5);
+			item.inputEnabled = true;
+			item.events.onInputDown.add(this.guessLetter, this);
+
 		}
+		items.align(8, -1, 100, 100);
+		items.x = (this.game.world.centerX - 400);
+		items.y = (this.game.world.centerY - 50);
+	},
+	guessLetter:function(item){
+		console.log(item.letter);	
+		item.kill();
+		guessedLetters.push(item.letter);
+		console.log(guessedLetters);
+		this.displayString.kill();
+		this.displayArray = this.displayWord();
+		this.showWord();
+		
 	}
 
 }
