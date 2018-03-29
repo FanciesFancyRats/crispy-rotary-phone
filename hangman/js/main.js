@@ -162,9 +162,10 @@ var GameState = {
 		console.log(this.hand);
 		items = game.add.group();
 		var item;
+		items.cursorIndex = 0;
 		for (i = 0; i < this.hand.length; i++){
 			item = items.create(0, 0, 'item');
-			item.name = 'block' + i;
+			item.name = i;
 			item.letter = this.hand[i]; 
 			item.anchor.setTo(0.5);
 			item.inputEnabled = true;
@@ -175,7 +176,7 @@ var GameState = {
 		items.x = (this.game.world.centerX - 400);
 		items.y = (this.game.world.centerY - 50);
 	},
-	guessLetter:function(item){
+	guessLetter:function(item, items){
 		console.log(item.letter);	
 		item.kill();
 		guessedLetters.push(item.letter);
@@ -183,7 +184,18 @@ var GameState = {
 		this.displayString.kill();
 		this.displayArray = this.displayWord();
 		this.showWord();
-		
+		this.moveLetters(item, items);
+	},
+	moveLetters:function(item, items){
+		if (item.name + 8 < this.hand.length){
+
+			items.next();
+			items.kill();
+
+			console.log('moving');
+
+			
+		}
 	}
 
 }
