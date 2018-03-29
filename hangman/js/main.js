@@ -135,9 +135,8 @@ var GameState = {
 		// Ideally this would seperate out each idividual letter, for animation, will test this
 		// later, there probably is some group aligment function, search docs
 		this.s = this.displayArray.join(''); 
-		this.game.add.text(this.game.world.centerX, this.game.world.centerY, this.s);
-		this.s.anchor.setTo(0.5);
-			
+		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY, this.s);
+		this.displayString.anchor.setTo(0.5);
 	},
 
 	testing:function(){
@@ -164,7 +163,13 @@ var GameState = {
 		//to get the begining coridinate, then iterate over placing each element according to 
 		//spacing
 		//Need to find proper spacing and bitmap font
-		
+		console.log(this.hand);
+		this.graphics = game.add.graphics(0,0);
+		for (i = 0; i < this.hand.length; i++){
+		this.graphics.beginFill(0xff0000);
+		this.block = this.graphics.drawRect((100 + (i*20)), 100, 100, 100);
+		this.graphics.endFill();
+		}
 	}
 
 }
