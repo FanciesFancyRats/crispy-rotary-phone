@@ -13,25 +13,26 @@ var GameState = {
 },
 
 	create:function() {
+		this.items = game.add.group();
 		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";	
 		this.hand = this.alphabet.split('');
 		this.secretWord = this.pickAWord();	
 		this.secretCharacters = this.secretWord.split('');
 
 		this.secretCharacters.splice(0, 1);
-		console.log(this.secretCharacters);
+		//console.log(this.secretCharacters);
 		//This makes an interactiable placeholder
 		x = Math.floor(Math.random()*83667);
 		var text = game.cache.getText('words');	
 		//console.log(text[3]);
 		var words = text.split(' ');
-		console.log(words[x]);
+		//console.log(words[x]);
 		this.secretWord = words[x]
 		this.sun= this.game.add.sprite(0,0,'sun');
 		this.sun.inputEnabled = true;
 		this.sun.events.onInputDown.add(this.testing, this);
 		//this.gessedLetters = ['A', 'B', 'C'];
-		console.log(this.gessedLetters);
+		//console.log(this.gessedLetters);
 		this.displayArray = this.displayWord();
 		this.showWord();
 		this.showHand();
@@ -60,25 +61,25 @@ var GameState = {
 
 },
 	displayWord:function(){
-		console.log(guessedLetters);
+		//console.log(guessedLetters);
 		//updates the display, assumes everything is correct
 		this.returnWord = [];
 		for(i=0;i<this.secretCharacters.length;i++){
 			//ifguessedletter indexOf secret character > 1A
 			//syntax is a little odd, check note
-			console.log(guessedLetters);
+			//console.log(guessedLetters);
 			if (guessedLetters.indexOf(this.secretCharacters[i]) >=  0){
 				//debugger;
-				console.log(' ');
-				console.log(guessedLetters.indexOf(this.secretCharacters[i]));
+				//console.log(' ');
+				//console.log(guessedLetters.indexOf(this.secretCharacters[i]));
 				this.returnWord[i] = this.secretCharacters[i];
 			}
 			else{
 				this.returnWord[i] = "_";	
 			}
 		}
-		console.log(this.returnWord);
-		console.log(this.secretCharacters);
+		//console.log(this.returnWord);
+		//console.log(this.secretCharacters);
 		return(this.returnWord);
 
 },
@@ -88,26 +89,26 @@ var GameState = {
 },
 	keyPress:function(char) {
 		this.keyboardPressedNum += 1;
-		console.log('KeyboardPressed:')
-		console.log(keyboardPressedNum);
+		////console.log('KeyboardPressed:')
+		////console.log(keyboardPressedNum);
 		var AlreadyGuessed = false;
 		var hit = false;
 		char = char.toUpperCase();
 		//console.log(this.lettersGuessed);
 		for(characters = 0; characters < this.lettersGuessed.length; characters++){
 			if (char == this.lettersGuessed[characters]){
-				console.log('Why is this ==?');
-				console.log(this.lettersGuessed[characters]);
-				console.log(char);
+				//console.log('Why is this ==?');
+				//console.log(this.lettersGuessed[characters]);
+				//console.log(char);
 				AlreadyGuessed = true;
-				console.log('Already guessed!');
+				//console.log('Already guessed!');
 			}
 			else{
 				this.lettersGuessed[this.zz] = char;
 				this.zz += 1;
 			}
 		}			
-		console.log(this.lettersGuessed);
+		//console.log(this.lettersGuessed);
 		if(AlreadyGuessed == false){
 			for (i = 0; i < this.secretCharacters.length; i++){
 				if(this.secretCharacters[i] == char){
@@ -119,11 +120,11 @@ var GameState = {
 		for(i = 1; i < this.secretCharacters.length; i++){
 			if(char.toUpperCase() == this.secretCharacters[i]){
 				
-				console.log('HIT!');		
+				//console.log('HIT!');		
 				break;
 			}	
 			else{
-				console.log('MISS!');
+				//console.log('MISS!');
 				//misses += 1;
 				//console.log(misses);
 				break;
@@ -143,7 +144,7 @@ var GameState = {
 
 	testing:function(){
 		//this.displayText();
-		console.log('click');	
+		//console.log('click');	
 	},
 	displayText:function(){
 		var currentDisplay = '';
@@ -159,12 +160,13 @@ var GameState = {
 			
 	},
 	showHand:function(){
-		console.log(this.hand);
-		items = game.add.group();
+//		//console.log(this.hand);
+		
 		var item;
-		items.cursorIndex = 0;
+		//this.items.cursorIndex = 0;
+		//console.log(this.items.cursorIndex);
 		for (i = 0; i < this.hand.length; i++){
-			item = items.create(0, 0, 'item');
+			item = this.items.create(0, 0, 'item');
 			item.name = i;
 			item.letter = this.hand[i]; 
 			item.anchor.setTo(0.5);
@@ -172,25 +174,39 @@ var GameState = {
 			item.events.onInputDown.add(this.guessLetter, this);
 
 		}
-		items.align(8, -1, 100, 100);
-		items.x = (this.game.world.centerX - 400);
-		items.y = (this.game.world.centerY - 50);
+		this.items.align(8, -1, 100, 100);
+		this.items.x = (this.game.world.centerX - 400);
+		this.items.y = (this.game.world.centerY - 50);
 	},
-	guessLetter:function(item, items){
-		console.log(item.letter);	
+	guessLetter:function(item){
+		//this.items.cursorIndex = 22;	
+		//item = this.items.next();
+		this.items.cursorIndex = item.name;
 		item.kill();
 		guessedLetters.push(item.letter);
-		console.log(guessedLetters);
+		//console.log(guessedLetters);
 		this.displayString.kill();
 		this.displayArray = this.displayWord();
 		this.showWord();
-		this.moveLetters(item, items);
+		this.moveLetters(item);
 	},
-	moveLetters:function(item, items){
+	moveLetters:function(item){
 		if (item.name + 8 < this.hand.length){
+			var swapX = item.x;
+			var swapY = item.y;
+			this.items.cursorIndex = item.name + 8;
+			item = this.items.next();	
+			item = this.items.previous();
 
-			items.next();
-			items.kill();
+			moveLetter = game.add.tween(item);
+			moveLetter.to({x:swapX, y:swapY}, 700, Phaser.Easing.Bounce.Out, true);
+
+
+			
+			//this.items.cursorIndex = item.name + 8;
+			console.log(this.items.cursorIndex);
+			//item
+			//this.items.kill();
 
 			console.log('moving');
 
