@@ -10,10 +10,15 @@ var GameState = {
 		this.game.load.image('sun','images/placeholder.jpg');
 		this.game.load.text('words','words/words.txt');
 		this.game.load.image('item', 'images/item.png');
+		//can't find the image, trying to make the health ui and logic
+		//
+		this.game.load.image('heart', 'images/health.png');
 },
 
 	create:function() {
+		this.health = 6;
 		this.items = game.add.group();
+		this.hearts = game.add.group();
 		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";	
 		this.hand = this.alphabet.split('');
 		this.secretWord = this.pickAWord();	
@@ -36,6 +41,7 @@ var GameState = {
 		this.displayArray = this.displayWord();
 		this.showWord();
 		this.showHand();
+		this.showHealth();
 		
 		//Overshoots by 1?
 		//Seems to work for the moment.
@@ -188,9 +194,10 @@ var GameState = {
 		this.displayString.kill();
 		this.displayArray = this.displayWord();
 		this.showWord();
-		this.moveLetters(item);
+		var delay = 700;
+		this.moveLetters(item, delay);
 	},
-	moveLetters:function(item){
+	moveLetters:function(item, delay){
 		if (item.name + 8 < this.hand.length){
 			var swapX = item.x;
 			var swapY = item.y;
@@ -199,7 +206,7 @@ var GameState = {
 			item = this.items.previous();
 
 			moveLetter = game.add.tween(item);
-			moveLetter.to({x:swapX, y:swapY}, 700, Phaser.Easing.Bounce.Out, true);
+			moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
 
 
 			
@@ -207,12 +214,23 @@ var GameState = {
 			console.log(this.items.cursorIndex);
 			//item
 			//this.items.kill();
+			
 
 			console.log('moving');
+			if (item.name + 8 < this.hand.length){
+				delay += 100;
+				this.moveLetters(item, delay);		
+			}
 
 			
 		}
-	}
+	},
+	showHealth:function(){
+		var heart;
+		for(i = 0; i < health; i++){
+			this.hearts.create(0,0,"heart");
+		}
+	}	
 
 }
 var config = {
