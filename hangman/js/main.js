@@ -7,15 +7,45 @@ var GameState = {
 		this.zz = 0;
 		this.misses = 0;
 
+		this.game.load.image('bg', 'images/BG.png');
 		this.game.load.image('sun','images/placeholder.jpg');
 		this.game.load.text('words','words/words.txt');
-		this.game.load.image('item', 'images/item.png');
+		this.game.load.image('item', 'images/A.png');
+		this.game.load.image('A', 'images/A.png');
+		this.game.load.image('B', 'images/B.png');
+		this.game.load.image('C', 'images/C.png');
+		this.game.load.image('D', 'images/D.png');
+		this.game.load.image('E', 'images/E.png');
+		this.game.load.image('F', 'images/F.png');
+		this.game.load.image('G', 'images/G.png');
+		this.game.load.image('H', 'images/H.png');
+		this.game.load.image('I', 'images/I.png');
+		this.game.load.image('J', 'images/J.png');
+		this.game.load.image('K', 'images/K.png');
+		this.game.load.image('L', 'images/L.png');
+		this.game.load.image('M', 'images/M.png');
+		this.game.load.image('N', 'images/N.png');
+		this.game.load.image('O', 'images/O.png');
+		this.game.load.image('P', 'images/P.png');
+		this.game.load.image('Q', 'images/Q.png');
+		this.game.load.image('R', 'images/R.png');
+		this.game.load.image('S', 'images/S.png');
+		this.game.load.image('T', 'images/T.png');
+		this.game.load.image('U', 'images/U.png');
+		this.game.load.image('V', 'images/V.png');
+		this.game.load.image('W', 'images/W.png');
+		this.game.load.image('X', 'images/X.png');
+		this.game.load.image('Y', 'images/Y.png');
+		this.game.load.image('Z', 'images/Z.png');
+
+
 		//can't find the image, trying to make the health ui and logic
 		//
 		this.game.load.image('heart', 'images/health.png');
 },
 
 	create:function() {
+		this.game.add.sprite(0,0,'bg');
 		this.health = 6;
 		this.items = game.add.group();
 		this.hearts = game.add.group();
@@ -33,9 +63,10 @@ var GameState = {
 		var words = text.split(' ');
 		//console.log(words[x]);
 		this.secretWord = words[x]
-		this.sun= this.game.add.sprite(0,0,'sun');
-		this.sun.inputEnabled = true;
-		this.sun.events.onInputDown.add(this.testing, this);
+		//this.bg = this.game.add.image(0,0,'bg');
+		//this.sun= this.game.add.sprite(0,0,'bg');
+		//this.sun.inputEnabled = true;
+		//this.sun.events.onInputDown.add(this.testing, this);
 		//this.gessedLetters = ['A', 'B', 'C'];
 		//console.log(this.gessedLetters);
 		this.displayArray = this.displayWord();
@@ -142,9 +173,14 @@ var GameState = {
 	showWord:function(){
 		// Ideally this would seperate out each idividual letter, for animation, will test this
 		// later, there probably is some group aligment function, search docs
-		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, '');
-		this.s = this.displayArray.join(''); 
-		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, this.s);
+		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, '', {font: "144px Arial", fill: "#ffffff"});
+			this.s = this.displayArray.join(''); 
+		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, this.s, {font: "144px Arial", fill: "#ffffff"});
+		this.displayString.stroke = "#3b07d7";
+		this.displayString.strokeThickness = 16;
+		this.displayString.setShadow(2, 2, "#333333", 2, false, true);
+	
+	
 		this.displayString.anchor.setTo(0.5);
 	},
 
@@ -172,7 +208,8 @@ var GameState = {
 		//this.items.cursorIndex = 0;
 		//console.log(this.items.cursorIndex);
 		for (i = 0; i < this.hand.length; i++){
-			item = this.items.create(0, 0, 'item');
+			item = this.items.create(0, 0, this.hand[i]);
+			//item = this.items.create(0, 0, 'item');
 			item.name = i;
 			item.letter = this.hand[i]; 
 			item.anchor.setTo(0.5);
@@ -198,6 +235,7 @@ var GameState = {
 		this.moveLetters(item, delay);
 	},
 	moveLetters:function(item, delay){
+		// TODO this need fixed again. if you comment out the second if statment there is a bug with the animation. It will skip animating the block if they are clicked in a 2, 1, sequence.
 		if (item.name + 8 < this.hand.length){
 			var swapX = item.x;
 			var swapY = item.y;
@@ -207,7 +245,18 @@ var GameState = {
 
 			moveLetter = game.add.tween(item);
 			moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
+			}
+		if (item.name + 16 < this.hand.length){
+			console.log("!!!!!!!!!!!!!!!");
+			var swapX = item.x;
+			var swapY = item.y;
+			this.items.cursorIndex = item.name + 16;
+			item = this.items.next();	
+			item = this.items.previous();
 
+			moveLetter = game.add.tween(item);
+			moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
+			}
 
 			
 			//this.items.cursorIndex = item.name + 8;
@@ -221,15 +270,18 @@ var GameState = {
 				delay += 100;
 				this.moveLetters(item, delay);		
 			}
+			else if (item.name + 16 < this.hand.length){
+				delay += 100;	
+				this.moveLetters(item, delay);
+			}
 
 			
-		}
-	},
+		},
 	showHealth:function(){
 		var heart;
-		for(i = 0; i < health; i++){
-			this.hearts.create(0,0,"heart");
-		}
+		//for(i = 0; i < health; i++){
+		//this.hearts.create(0,0,"heart");
+		//}
 	}	
 
 }
