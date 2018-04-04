@@ -224,6 +224,7 @@ var GameState = {
 	guessLetter:function(item){
 		//this.items.cursorIndex = 22;	
 		//item = this.items.next();
+		console.log(item.alive);
 		this.items.cursorIndex = item.name;
 		item.kill();
 		guessedLetters.push(item.letter);
@@ -231,14 +232,127 @@ var GameState = {
 		this.displayString.kill();
 		this.displayArray = this.displayWord();
 		this.showWord();
+		if(item.name + 8 < this.hand.length){
+		this.items.cursorIndex = item.name + 8;
+		item = this.items.next();
+		item = this.items.previous();
+		target = item;
+		this.items.cursorIndex = item.name - 8;
+		item = this.items.next();
+		item = this.items.previous();
+		}
+		else{
+		target = item;	
+		}
 		var delay = 700;
-		this.moveLetters(item, delay);
+		this.moveLetters(item,target, delay);
 	},
-	moveLetters:function(item, delay){
-		// TODO this need fixed again. if you comment out the second if statment there is a bug with the animation. It will skip animating the block if they are clicked in a 2, 1, sequence.
+	moveLetters:function(item,target, delay){
+		console.log(item.name);
+		console.log(target.name);
+		console.log(delay);
+		if (item.name + 8 > this.hand.length){
+			console.log('Done Moving');	
+			return;
+		}
+		if((item.name + 8 < this.hand.length)&&(target.alive)){
+			console.log('move item to target');
+			
+			
+
+		}
+		if((item.name + 8 < this.hand.length)&&(target.alive != true)){
+			console.log('Skip this one and try again');	
+		}
+				
+	},
+			 
+
+		//Current idea:A
+		// function (guess, "guess + x", delay)
+		//check if guess + 8 > hand.length
+		//	if it is then we are at the last row and no other action is needed.
+		//if guess + 8 < hand.length and guess + 8 is alive
+		//	then we need to move that item to guess's position and recurse with guess + 8
+		//if guess + 8 < hand.length and guess + 8 is dead
+		//	then we need to recurse with the current guess but some how to target is now + 16 of the original?
+		//
+		/*
 		if (item.name + 8 < this.hand.length){
-			var swapX = item.x;
-			var swapY = item.y;
+			this.items.curorIndex = item.name + 8;
+			item = this.items.next();
+			item = this.items.previous();
+			if(item.alive){
+				this.items.curorIndex = item.name - 8;
+				item = this.items.next();
+				item = this.items.previous();
+				var swapX = item.x;
+				var swapY = item.y;
+				this.items.cursorIndex = item.name + 8;
+				item = this.items.next();	
+				item = this.items.previous();
+				moveLetter = game.add.tween(item);
+				moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
+			}
+			else{
+				this.items.cursorIndex = item.name - 8;
+				item = this.items.next();
+				item = this.items.previous();
+			}
+		}
+		if (item.name + 16 < this.hand.length){
+			this.items.curorIndex = item.name + 16;
+			item = this.items.next();
+			item = this.items.previous();
+			if(item.alive){
+				this.items.curorIndex = item.name - 16;
+				item = this.items.next();
+				item = this.items.previous();
+				var swapX = item.x;
+				var swapY = item.y;
+				this.items.cursorIndex = item.name + 16;
+				item = this.items.next();	
+				item = this.items.previous();
+				moveLetter = game.add.tween(item);
+				moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
+			}
+			else{
+				this.items.cursorIndex = item.name - 16;
+				item = this.items.next();
+				item = this.items.previous();
+			}
+		}
+		if (item.name + 24 < this.hand.length){
+			this.items.curorIndex = item.name + 24;
+			item = this.items.next();
+			item = this.items.previous();
+			if(item.alive){
+				this.items.curorIndex = item.name - 24;
+				item = this.items.next();
+				item = this.items.previous();
+				var swapX = item.x;
+				var swapY = item.y;
+				this.items.cursorIndex = item.name + 24;
+				item = this.items.next();	
+				item = this.items.previous();
+				moveLetter = game.add.tween(item);
+				moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
+			}
+			else{
+				this.items.cursorIndex = item.name - 24;
+				item = this.items.next();
+				item = this.items.previous();
+			}
+		}
+
+
+
+		
+		if (item.name + 8 < this.hand.length){
+			//console.log("!!!!!!!!!!!!!!!");
+			//console.log(item.exist);
+			swapX = item.x;
+			swapY = item.y;
 			this.items.cursorIndex = item.name + 8;
 			item = this.items.next();	
 			item = this.items.previous();
@@ -246,26 +360,27 @@ var GameState = {
 			moveLetter = game.add.tween(item);
 			moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
 			}
-		if (item.name + 16 < this.hand.length){
-			console.log("!!!!!!!!!!!!!!!");
-			var swapX = item.x;
-			var swapY = item.y;
-			this.items.cursorIndex = item.name + 16;
+		if (item.name + 8 < this.hand.length){
+			//console.log("!!!!!!!!!!!!!!!");
+			swapX = item.x;
+			swapY = item.y;
+			this.items.cursorIndex = item.name + 8;
 			item = this.items.next();	
 			item = this.items.previous();
 
 			moveLetter = game.add.tween(item);
 			moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
 			}
+	
 
 			
 			//this.items.cursorIndex = item.name + 8;
-			console.log(this.items.cursorIndex);
+			////console.log(this.items.cursorIndex);
 			//item
 			//this.items.kill();
 			
 
-			console.log('moving');
+			////console.log('moving');
 			if (item.name + 8 < this.hand.length){
 				delay += 100;
 				this.moveLetters(item, delay);		
@@ -274,9 +389,9 @@ var GameState = {
 				delay += 100;	
 				this.moveLetters(item, delay);
 			}
-
+		*/
 			
-		},
+		
 	showHealth:function(){
 		var heart;
 		//for(i = 0; i < health; i++){
