@@ -248,6 +248,7 @@ var GameState = {
 		this.moveLetters(item,target, delay);
 	},
 	moveLetters:function(item,target, delay){
+		//Add a check for target.name being more than hand length maybe... I don't know rethink this TODO
 		console.log(item.name);
 		console.log(target.name);
 		console.log(delay);
@@ -257,12 +258,17 @@ var GameState = {
 		}
 		if((item.name + 8 < this.hand.length)&&(target.alive)){
 			console.log('move item to target');
+			target.name += 8;
+			item.name += 8;
+			this.moveLetters(item, target, delay);
 			
 			
 
 		}
 		if((item.name + 8 < this.hand.length)&&(target.alive != true)){
-			console.log('Skip this one and try again');	
+			console.log('Skip this one and try again');
+			item.name += 8;
+			target.name += 8;
 		}
 				
 	},
