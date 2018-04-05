@@ -222,9 +222,14 @@ var GameState = {
 		this.items.y = (this.game.world.centerY - 50);
 	},
 	guessLetter:function(item){
+		var target = {
+			x : 0,
+			y : 0,
+			name : 0,
+		};
 		//this.items.cursorIndex = 22;	
 		//item = this.items.next();
-		console.log(item.alive);
+		console.log('Item name: ', item.name);
 		this.items.cursorIndex = item.name;
 		item.kill();
 		guessedLetters.push(item.letter);
@@ -233,42 +238,60 @@ var GameState = {
 		this.displayArray = this.displayWord();
 		this.showWord();
 		if(item.name + 8 < this.hand.length){
+		console.log('Item name: ', item.name);
 		this.items.cursorIndex = item.name + 8;
 		item = this.items.next();
 		item = this.items.previous();
-		target = item;
+		target.x = item.x;
+		target.y = item.y;
+		target.name = item.name;
+		target.name = item.name;
 		this.items.cursorIndex = item.name - 8;
 		item = this.items.next();
 		item = this.items.previous();
 		}
 		else{
-		target = item;	
+		target.x = item.x;	
+		target.y = item.y;
+		target.name = item.name;
+		target.name += 8;
 		}
 		var delay = 700;
 		this.moveLetters(item,target, delay);
 	},
 	moveLetters:function(item,target, delay){
 		//Add a check for target.name being more than hand length maybe... I don't know rethink this TODO
+		var targetSwap = 0;
 		console.log(item.name);
 		console.log(target.name);
 		console.log(delay);
-		if (item.name + 8 > this.hand.length){
+		if ((item.name + 8 > this.hand.length)||(target.name > this.hand.length)){
 			console.log('Done Moving');	
 			return;
 		}
+		//move item cursor + 8 and check if item is alive?
+		//use the target.name to set the item cursor.
+		//
 		if((item.name + 8 < this.hand.length)&&(target.alive)){
+			console.log('Item name at line 261: ', item.name);
 			console.log('move item to target');
+			this.items.cursorIndex = item.name + 8;
+			item = this.items.next();
+			item = this.items.previous();
+			console.log('Item name at line 266: ', item.name);
 			target.name += 8;
-			item.name += 8;
+			console.log('Item name at line 267: ', item.name);
 			this.moveLetters(item, target, delay);
 			
 			
 
 		}
+		//if item isn't alive then move here and check if the next one is alive
 		if((item.name + 8 < this.hand.length)&&(target.alive != true)){
 			console.log('Skip this one and try again');
-			item.name += 8;
+			//item.name += 8;
 			target.name += 8;
+			this.moveLetters(item, target, delay);
 		}
 				
 	},
