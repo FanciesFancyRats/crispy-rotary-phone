@@ -45,8 +45,10 @@ var GameState = {
 },
 
 	create:function() {
+		
 		this.game.add.sprite(0,0,'bg');
 		this.health = 6;
+		//this.game.add.sprite(0,0,'heart');
 		this.items = game.add.group();
 		this.hearts = game.add.group();
 		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";	
@@ -237,62 +239,60 @@ var GameState = {
 		this.displayString.kill();
 		this.displayArray = this.displayWord();
 		this.showWord();
+
 		if(item.name + 8 < this.hand.length){
 		console.log('Item name: ', item.name);
-		this.items.cursorIndex = item.name + 8;
-		item = this.items.next();
-		item = this.items.previous();
-		target.x = item.x;
-		target.y = item.y;
-		target.name = item.name;
-		target.name = item.name;
-		this.items.cursorIndex = item.name - 8;
-		item = this.items.next();
-		item = this.items.previous();
+		target = this.items.getChildAt(item.name + 8);
 		}
 		else{
-		target.x = item.x;	
-		target.y = item.y;
-		target.name = item.name;
-		target.name += 8;
+		target = this.items.getChildAt(item.name);	
 		}
 		var delay = 700;
 		this.moveLetters(item,target, delay);
 	},
 	moveLetters:function(item,target, delay){
-		//Add a check for target.name being more than hand length maybe... I don't know rethink this TODO
-		var targetSwap = 0;
-		console.log(item.name);
-		console.log(target.name);
-		console.log(delay);
-		if ((item.name + 8 > this.hand.length)||(target.name > this.hand.length)){
-			console.log('Done Moving');	
-			return;
-		}
-		//move item cursor + 8 and check if item is alive?
-		//use the target.name to set the item cursor.
+		//Add a check for target.name being more than hand length maybe... I don't know rethink this
 		//
-		if((item.name + 8 < this.hand.length)&&(target.alive)){
-			console.log('Item name at line 261: ', item.name);
-			console.log('move item to target');
-			this.items.cursorIndex = item.name + 8;
-			item = this.items.next();
-			item = this.items.previous();
-			console.log('Item name at line 266: ', item.name);
-			target.name += 8;
-			console.log('Item name at line 267: ', item.name);
-			this.moveLetters(item, target, delay);
+		//this works...
+		//xa = this.items.getChildAt(5);
+		//console.log(xa);
+		//
 			
+		console.log('current item is: ', item.name);
+		console.log('current target is: ', target.name);
+		// if target == item, then nothing needs to be done.
+		if(target.name === item.name) {
+			console.log('Nothing to move');	
+		}
+		else if (target.alive){
+			var swapX = item.x;
+			var swapY = item.y;
+
+			console.log('Target is alive');	
+			moveLetter = game.add.tween(target);
+			moveLetter.to({x:swapX, y:swapY}, delay, Phaser.Easing.Bounce.Out, true);
+			if((target.name + 8) < this.hand.length){
+			item = this.items.getChildAt(target.name);
+			target = this.items.getChildAt(target.name + 8);
+			this.moveLetters(item,target,delay);
+			}
+			else{
+			console.log('Nothing to move');	
+			}
 			
 
 		}
-		//if item isn't alive then move here and check if the next one is alive
-		if((item.name + 8 < this.hand.length)&&(target.alive != true)){
-			console.log('Skip this one and try again');
-			//item.name += 8;
-			target.name += 8;
-			this.moveLetters(item, target, delay);
+		else if (target.alive === false){
+			console.log('Target is dead');	
+			if((target.name + 8) < this.hand.length){
+			target = this.items.getChildAt(target.name + 8);
+			this.moveLetters(item,target,delay);
+			}
+			else{
+			console.log('Nothing to move');	
+			}
 		}
+	
 				
 	},
 			 
