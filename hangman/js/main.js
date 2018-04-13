@@ -51,6 +51,7 @@ var GameState = {
 		//this.game.add.sprite(0,0,'heart');
 		this.items = game.add.group();
 		this.hearts = game.add.group();
+		
 		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";	
 		this.hand = this.alphabet.split('');
 		this.secretWord = this.pickAWord();	
@@ -422,12 +423,19 @@ var GameState = {
 			
 		
 	showHealth:function(){
+		console.log(this.health);
 		var heart;
-		//for(i = 0; i < health; i++){
-		//this.hearts.create(0,0,"heart");
-		//}
+		for(j = 0; j < this.health; j++){
+			heart = this.hearts.create(0, 0, 'heart');
+			heart.anchor.setTo(0.5);
+			console.log('Made a heart');
+			//heart.y = (j*10);
+		
+		}
+		this.hearts.align(1, -1, 100, 100);
+		
 	}	
-
+ 
 }
 var config = {
 	width: 1280,
