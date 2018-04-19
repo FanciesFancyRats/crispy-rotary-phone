@@ -1,4 +1,4 @@
-guessedLetters = ['A', 'B', 'C'];
+guessedLetters = [];
 
 var GameState = {
 
@@ -68,6 +68,7 @@ var GameState = {
 		this.secretWord = words[x]
 		//this.bg = this.game.add.image(0,0,'bg');
 		//this.sun= this.game.add.sprite(0,0,'bg');
+		//
 		//this.sun.inputEnabled = true;
 		//this.sun.events.onInputDown.add(this.testing, this);
 		//this.gessedLetters = ['A', 'B', 'C'];
@@ -75,7 +76,7 @@ var GameState = {
 		this.displayArray = this.displayWord();
 		this.showWord();
 		this.showHand();
-		this.showHealth();
+		this.showHealth(1);
 		
 		//Overshoots by 1?
 		//Seems to work for the moment.
@@ -225,6 +226,10 @@ var GameState = {
 		this.items.y = (this.game.world.centerY - 50);
 	},
 	guessLetter:function(item){
+		if(this.health < 0){
+			console.log('You are dead');
+			return(0);
+		}
 		var target = {
 			x : 0,
 			y : 0,
@@ -236,12 +241,15 @@ var GameState = {
 		this.items.cursorIndex = item.name;
 		item.kill();
 		guessedLetters.push(item.letter);
+		this.calcDamage(item.letter);
 		//console.log(guessedLetters);
 		this.displayString.kill();
 		this.displayArray = this.displayWord();
 		this.showWord();
-
-		if(item.name + 8 < this.hand.length){
+		if(this.health < 0){
+			console.log('You are dead');
+		}
+		else if(item.name + 8 < this.hand.length){
 		console.log('Item name: ', item.name);
 		target = this.items.getChildAt(item.name + 8);
 		}
@@ -422,7 +430,10 @@ var GameState = {
 		*/
 			
 		
-	showHealth:function(){
+	showHealth:function(n){
+		//Have this function take a parameter to decide if it needs to work for the initial setup
+		//or if it needs to remove or add a heart.
+		if(n === 1){
 		console.log(this.health);
 		var heart;
 		for(j = 0; j < this.health; j++){
@@ -433,8 +444,51 @@ var GameState = {
 		
 		}
 		this.hearts.align(1, -1, 100, 100);
+		}
+		else{
+			if(this.health < 0){
+				var pushAll = this.alphabet.split('');
+				this.items.removeAll(true);
+				for(i = 0; i < pushAll.length; i++){
+					guessedLetters.push(pushAll[i]);	
+				} 
+				this.displayString.kill();
+				this.displayArray = this.displayWord();
+				this.showWord();
+
+
+			}
+			else{
+			heart = this.hearts.getChildAt(this.health);
+			heart.kill();	
+			console.log(heart, 'did we see that?');	
+			}
+			
+		}
 		
-	}	
+	},
+	calcDamage:function(guess){
+		var hit = true;
+
+		for(i = 0; i < this.secretCharacters.length; i++){
+			if(this.secretCharacters.indexOf(guess) < 1){
+				hit = false;			
+			}
+		}	
+		if(hit){
+			console.log('Hit');	
+		}
+		else{
+			console.log('Miss');	
+			this.health -= 1;
+
+			console.log(this.health);
+			this.showHealth(2);
+			
+			
+		}
+
+	}
  
 }
 var config = {
