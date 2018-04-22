@@ -1,0 +1,27 @@
+		this.game.load.image('A', 'images/A.png');
+		this.game.load.image('B', 'images/B.png');
+		this.game.load.image('C', 'images/C.png');
+		this.game.load.image('D', 'images/D.png');
+		this.game.load.image('E', 'images/E.png');
+		this.game.load.image('F', 'images/F.png');
+		this.game.load.image('G', 'images/G.png');
+		this.game.load.image('H', 'images/H.png');
+		this.game.load.image('I', 'images/I.png');
+		this.game.load.image('J', 'images/J.png');
+		this.game.load.image('K', 'images/K.png');
+		this.game.load.image('L', 'images/L.png');
+		this.game.load.image('M', 'images/M.png');
+		this.game.load.image('N', 'images/N.png');
+		this.game.load.image('O', 'images/O.png');
+		this.game.load.image('P', 'images/P.png');
+		this.game.load.image('Q', 'images/Q.png');
+		this.game.load.image('R', 'images/R.png');
+		this.game.load.image('S', 'images/S.png');
+		this.game.load.image('T', 'images/T.png');
+		this.game.load.image('U', 'images/U.png');
+		this.game.load.image('V', 'images/V.png');
+		this.game.load.image('W', 'images/W.png');
+		this.game.load.image('X', 'images/X.png');
+		this.game.load.image('Y', 'images/Y.png');
+		this.game.load.image('Z', 'images/Z.png');
+
