@@ -5,7 +5,7 @@ var GameState = {
 	preload:function() {
 		this.game.load.image("hold","images/placeholder.jpg");
 		this.game.load.text("words", "words/words.txt");
-		this.game.load.image("BG", "images/bg.png");
+		this.game.load.image("BG", "images/BG.png");
 		this.game.load.image("A", "images/A.png");
 		this.game.load.image("B", "images/B.png");
 		this.game.load.image("C", "images/C.png");
@@ -37,8 +37,13 @@ var GameState = {
 },
 
 	create:function() {
+		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, '',{font: "144px Arial", fill:"#ffffff"});
+		this.displayString.inputEnabled = true;
+		this.displayString.events.onInputDown.add(this.submit, this);
+
 		this.letters = game.add.group();
 		this.hand = [];
+		this.displayArray = [];
 		this.cons = "BCDFGHJKLMNPQRSTVWXYZ";
 		this.cons = this.cons.split("");
 		this.vowel = "AEIOU";
@@ -49,6 +54,11 @@ var GameState = {
 		this.dealHand(32);
 
 		this.createHand();
+
+		this.s = '';
+		this.displayArray = [];
+		this.guessArray = [];
+
 
 },
 
@@ -79,7 +89,8 @@ var GameState = {
 			letter.anchor.setTo(0.5);
 			letter.inputEnabled = true;
 			letter.events.onInputDown.add(this.addLetter, this);
-			letter.name = (this.hand[i] + i);
+			letter.name = (i);
+			letter.value = (this.hand[i]);
 		}
 		this.letters.align(8, -1, 100, 100);
 		this.letters.x = (this.game.world.centerX - 400);
@@ -90,6 +101,47 @@ var GameState = {
 		//Adds clicked letter to the displayArray
 		console.log(letter.name)		
 		letter.kill();
+		this.displayArray.push(letter.value);
+		this.guessArray.push(letter.name);
+		this.displayGuess();
+
+},
+	displayGuess:function(){
+		//Clears the current displayed letters and then prints out the current displayArray
+		//look at showWord() in hangman
+		//TODO
+		this.displayString.kill();
+		this.s = this.displayArray.join('');
+		this.displayString = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, this.s,{font: "144px Arial", fill:"#ffffff"});
+		this.displayString.anchor.setTo(0.5);
+		this.displayString.inputEnabled = true;
+		this.displayString.events.onInputDown.add(this.submit, this);
+		
+	},
+	submit:function(){
+		//Called when displayString is clicked, checks this.string is a word and then kills the word
+		//if true gets score
+		//if false returns letters
+		//
+		//TODO
+		//Actually impliment the revive function when a guess isn't correct
+		var target;
+		console.log(this.s);
+		console.log(this.checkWord(this.s));
+		if(this.checkWord(this.s)){
+			this.displayString.kill();
+			console.log('you get points');
+		}	
+		else{
+			this.displayString.kill();	
+			for (i = 0; i < this.guessArray.length; i++){
+				target = this.letters.getChildAt(this.guessArray[i]);
+				console.log('revive: ', target); 
+			}
+
+
+		}
+	
 	}
 
 	
