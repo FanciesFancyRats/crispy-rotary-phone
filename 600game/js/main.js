@@ -99,7 +99,7 @@ var GameState = {
 },
 	addLetter:function(letter){
 		//Adds clicked letter to the displayArray
-		console.log(letter.name)		
+		//console.log(letter.name)		
 		letter.kill();
 		this.displayArray.push(letter.value);
 		this.guessArray.push(letter.name);
@@ -121,27 +121,82 @@ var GameState = {
 	submit:function(){
 		//Called when displayString is clicked, checks this.string is a word and then kills the word
 		//if true gets score
-		//if false returns letters
-		//
-		//TODO
-		//Actually impliment the revive function when a guess isn't correct
+		//if false revives letters
+
 		var target;
-		console.log(this.s);
-		console.log(this.checkWord(this.s));
+		//console.log(this.s);
+		//console.log(this.checkWord(this.s));
 		if(this.checkWord(this.s)){
 			this.displayString.kill();
-			console.log('you get points');
+			//console.log('you get points');
+			this.getScore();
+			this.s = '';
+			this.displayArray = [];
+			this.guessArray = [];
 		}	
 		else{
 			this.displayString.kill();	
 			for (i = 0; i < this.guessArray.length; i++){
 				target = this.letters.getChildAt(this.guessArray[i]);
-				console.log('revive: ', target); 
+				target.revive();
+			}
+			this.s = '';
+			this.displayArray = [];
+			//console.log('Should be back');
+
+		}
+	
+	},
+	// 'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+	getScore:function(){
+		//TODO:
+		//Add a this.gameScore variable
+		//add other conditionals into the scoring, (hand size and possibly time)
+		//
+		//
+		//If the word is valid find the score of the word
+		wordScore = 0;
+		//console.log('yay points');
+		console.log(['A'].indexOf(this.displayArray[1]));
+		for(i = 0; i < this.displayArray.length; i++){
+			if(['A' , 'E' , 'I' , 'L' , 'N' , 'O' , 'R' , 'S' , 'T' , 'U'].indexOf(this.displayArray[i]) >= 0){
+				wordScore+= 1;
+				console.log(this.displayArray[i], ['A' , 'E' , 'I' , 'L' , 'N' , 'O' , 'R' , 'S' , 'T' , 'U'].indexOf(this.displayArray[i]));
+			}
+
+			else if(['D' , 'G'].indexOf(this.displayArray[i]) >= 0){
+				wordScore+= 2;	
+				console.log(this.displayArray[i], 'for 2');
+			}
+			else if(['B' , 'C' , 'M' , 'P'].indexOf(this.displayArray[i]) >= 0){
+				wordScore+= 3;	
+				console.log(this.displayArray[i], 'for 3');
+			}
+			else if(['F' , 'H' , 'U' , 'W' , 'Y'].indexOf(this.displayArray[i]) >= 0){
+				wordScore+= 4;
+				console.log(this.displayArray[i], 'for 4');
+			}
+			else if(['K'].indexOf(this.displayArray[i]) >= 0){
+				wordScore+= 5;	
+				console.log(this.displayArray[i], 'for 5');
+
+			}
+			else if(['J' , 'X'].indexOf(this.displayArray[i]) >= 0){
+				wordScore+= 8;	
+				console.log(this.displayArray[i], 'for 8');
+
+			}
+			else if(['Q' , 'Z'].indexOf(this.displayArray[i]) >= 0){
+				wordScore+= 10;	
+				console.log(this.displayArray[i], 'for 10');
+
 			}
 
 
 		}
-	
+		console.log('for ',wordScore, 'points');
+
+
 	}
 
 	
