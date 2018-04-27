@@ -43,7 +43,7 @@ var GameState = {
 
 		this.scoreDisplay = this.game.add.text(1200 , 10, this.gameScore,{font:'40px Arial', fill:'#ffffff'});
 
-	
+			
 		
 		this.displayScore();
 		this.displayString.events.onInputDown.add(this.submit, this);
@@ -56,7 +56,10 @@ var GameState = {
 		this.cons = this.cons.split("");
 		this.vowel = "AEIOU";
 		this.vowel = this.vowel.split("");
-		this.game.add.image(0,0,"hold");
+		this.hold = this.game.add.sprite(0,0,"hold");
+		this.hold.inputEnabled = true;
+		this.hold.events.onInputDown.add(this.end, this);
+
 		var rawText = game.cache.getText("words");
 		this.dictionary = rawText.split("\n");
 		this.dealHand(32);
@@ -160,6 +163,7 @@ var GameState = {
 			}
 			this.s = '';
 			this.displayArray = [];
+			this.guessArray = [];
 
 		}
 	
@@ -195,7 +199,7 @@ var GameState = {
 
 
 		}
-		if((7*this.displayArray.length+1) - 3*((32/2)-this.displayArray.length+1) > 1){
+		if(this.displayArray.length > 4){
 			wordScore+=((7*this.displayArray.length+1) - 3*((32/2)-this.displayArray.length+1))
 			this.moveLetters();
 
@@ -208,11 +212,15 @@ var GameState = {
 		console.log('Total: ', this.gameScore);
 	},
 	moveLetters:function(){
-		//
+		this.guessArray.sort(function(a, b){
+			return a - b;	
+		});	
+		console.log('Did it sort?', this.guessArray);
 		for(i = 0; i < this.guessArray.length; i++){
 			swapTarget = 0;
 			swapOrign = 0
 			console.log(this.guessArray[i]);	
+			console.log(this.guessArray);
 			if(this.guessArray[i] + 8 < 32){
 				console.log(this.letters.getChildAt(this.guessArray[i]), 'needs moved');
 				//TODO
@@ -226,7 +234,23 @@ var GameState = {
 
 
 					while(swapTarget < 32) {
-						console.log(this.letters.getChildAt(swapTarget));
+						letter = this.letters.getChildAt(swapOrgin);
+						target = this.letters.getChildAt(swapTarget);
+						test = this.letters.getChildAt(swapOrgin + 8);
+						//console.log('letter:', letter.value, 'target:', target.value);
+						swapX = letter.x;
+						swapY = letter.y;
+						if(target.alive){
+						console.log('swap orgin: ', swapOrgin, 'swap target: ', swapTarget);
+						moveLetter = game.add.tween(this.letters.getChildAt(swapTarget));
+						moveLetter.to({x:swapX, y:swapY}, 0, Phaser.Easing.Bounce.Out, true);
+						if(test.alive){
+						swapOrgin = swapTarget;	
+							}
+						else{
+							swapOrgin += 8;
+							}
+						}
 						swapTarget += 8;
 						
 					}
@@ -237,6 +261,10 @@ var GameState = {
 				console.log('nothing to move');	
 			}
 		}			
+	},
+	end:function(){
+		console.log('Wrap it up');
+		this.letters.removeAll(true);
 	}
 
 
