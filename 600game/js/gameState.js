@@ -1,6 +1,9 @@
 
 
 var gameState = {
+	init:function(){
+		highScore = highScore;	
+	},
 
 	preload:function() {
 		this.game.load.image("hold","images/placeholder.jpg");
@@ -32,6 +35,10 @@ var gameState = {
 		this.game.load.image("X", "images/X.png");
 		this.game.load.image("Y", "images/Y.png");
 		this.game.load.image("Z", "images/Z.png");
+
+		//this.game.load.image('options', 'images/options.png');
+		//this.game.load.image('highScore', 'images/highScore.png');
+		//this.game.load.image('start', 'images/start.png');
 		
 
 },
@@ -264,6 +271,7 @@ var gameState = {
 		}			
 	},
 	end:function(){
+		
 		console.log('Wrap it up');
 		var bonus = 0;
 		
@@ -287,11 +295,22 @@ var gameState = {
 		this.scoreDisplay.kill();
 
 		this.scoreDisplay = this.game.add.text(this.game.world.centerX , this.game.world.centerY, this.gameScore,{font:'144px Arial', fill:'#ffffff'});
+		console.log(this.gameScore);
+		console.log(highScore);
+
+		if(this.gameScore > highScore){
+		highScore = this.gameScore;
+		console.log('updating highScore');
+		}
 		this.scoreDisplay.anchor.setTo(0.5);
 		this.scoreDisplay.inputEnabled = true;
-		this.scoreDisplay.events.onInputDown.add(function//TODO start bootstate again and pass highScore 
+		this.scoreDisplay.events.onInputDown.add(this.changeState, this);
 		
 
+	},
+
+	changeState:function(){
+		this.state.start('bootState', true, false, highScore);
 	}
 
 
