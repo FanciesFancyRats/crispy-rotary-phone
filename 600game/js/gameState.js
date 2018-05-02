@@ -78,6 +78,8 @@ var gameState = {
 		this.displayArray = [];
 		this.guessArray = [];
 
+		this.scoreAnimate = 0;
+
 
 },
 
@@ -146,6 +148,19 @@ var gameState = {
 		this.scoreText = this.game.add.text(1100 , 20, 'Score:',{font: '40px Arial', fill:'#ffffff'});
 		this.scoreText.anchor.setTo(0.5);
 },
+	animateScore:function(add){
+		//TODO I think I have a better way to impliment this, use a for loop and timer.add(displayscore()) or something along those lines
+		for (i = add; i > 0; i--){
+			this.scoreDisplay.kill();
+			this.scoreDisplay = this.game.add.text(1200, 20, this.gameScore - i, {font: '40px Arial', fill:'#ffffff'});
+			timer = game.time.create(false);
+
+
+		} 
+		
+
+
+	},
 	submit:function(){
 		//Called when displayString is clicked, checks this.string is a word and then kills the word
 		//if true gets score and begin moving the letters
@@ -215,8 +230,10 @@ var gameState = {
 		else{
 			wordScore++;		
 		}
+
 		////console.log('for ',wordScore, 'points');
 		this.gameScore+=wordScore;
+		this.scoreAnimate = wordScore;
 		//console.log('Total: ', this.gameScore);
 	},
 	moveLetters:function(){
