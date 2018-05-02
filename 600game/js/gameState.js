@@ -6,7 +6,7 @@ var gameState = {
 	},
 
 	preload:function() {
-		this.game.load.image("hold","images/placeholder.jpg");
+		this.game.load.image("endButton","images/endButton.png");
 		this.game.load.text("words", "words/words.txt");
 		this.game.load.image("BG", "images/BG.png");
 		this.game.load.image("A", "images/A.png");
@@ -64,9 +64,9 @@ var gameState = {
 		this.cons = this.cons.split("");
 		this.vowel = "AEIOU";
 		this.vowel = this.vowel.split("");
-		this.hold = this.game.add.sprite(0,0,"hold");
-		this.hold.inputEnabled = true;
-		this.hold.events.onInputDown.add(this.end, this);
+		this.endButton = this.game.add.sprite(0,0,"endButton");
+		this.endButton.inputEnabled = true;
+		this.endButton.events.onInputDown.add(this.end, this);
 
 		var rawText = game.cache.getText("words");
 		this.dictionary = rawText.split("\n");
@@ -190,7 +190,7 @@ var gameState = {
 			else if(['B' , 'C' , 'M' , 'P'].indexOf(this.displayArray[i]) >= 0){
 				wordScore+= 3;	
 			}
-			else if(['F' , 'H' , 'U' ,'V', 'W' , 'Y'].indexOf(this.displayArray[i]) >= 0){
+			else if(['F' , 'H' ,'V', 'W' , 'Y'].indexOf(this.displayArray[i]) >= 0){
 				wordScore+= 4;
 			}
 			else if(['K'].indexOf(this.displayArray[i]) >= 0){

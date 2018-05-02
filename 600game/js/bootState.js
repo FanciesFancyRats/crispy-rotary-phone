@@ -42,7 +42,7 @@ var bootState = {
 		console.log('BootState was updated');
 		this.highScoreDisplay = this.game.add.text(0,0 , highScore, {font: "144px Arial", fill:"#fff"});
 		this.highScoreDisplay.alignIn(this.highScoreLayout, Phaser.BOTTOM_CENTER, 0, -20,)
-		this.highScoreText = this.game.add.text(0, 0, 'High Score:'
+		this.highScoreText = this.game.add.text(0, 0, 'High Score:');
 		//this.state.start('gameState');
 		//TODO you still need a main.js that adds the state
 	},
