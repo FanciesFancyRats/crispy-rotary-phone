@@ -150,16 +150,25 @@ var gameState = {
 },
 	animateScore:function(add){
 		//TODO I think I have a better way to impliment this, use a for loop and timer.add(displayscore()) or something along those lines
-		for (i = add; i > 0; i--){
-			this.scoreDisplay.kill();
-			this.scoreDisplay = this.game.add.text(1200, 20, this.gameScore - i, {font: '40px Arial', fill:'#ffffff'});
-			timer = game.time.create(false);
+		console.log('animating');
+			
+		game.time.events.add(Phaser.Timer.QUARTER * 5, this.updateText, this, i);
 
+	},
+	updateText:function(i){
 
-		} 
-		
+		this.scoreDisplay.kill();
+		this.scoreDisplay = this.game.add.text(1200 , 20, this.gameScore-i,{font: '40px Arial', fill:'#ffffff'});
+		this.scoreDisplay.anchor.setTo(0.5);
 
+		this.scoreText = this.game.add.text(1100 , 20, 'Score:',{font: '40px Arial', fill:'#ffffff'});
+		this.scoreText.anchor.setTo(0.5);
 
+		console.log('updating text', i);
+
+	},
+	wait:function(){
+		console.log('wait');	
 	},
 	submit:function(){
 		//Called when displayString is clicked, checks this.string is a word and then kills the word
@@ -170,7 +179,7 @@ var gameState = {
 		if(this.checkWord(this.s)){
 			this.displayString.kill();
 			this.getScore();
-			this.displayScore();
+			//this.displayScore();
 			this.s = '';
 			this.displayArray = [];
 			this.moveLetters();
@@ -233,7 +242,8 @@ var gameState = {
 
 		////console.log('for ',wordScore, 'points');
 		this.gameScore+=wordScore;
-		this.scoreAnimate = wordScore;
+		this.animateScore(wordScore);
+		//this.scoreAnimate = wordScore;
 		//console.log('Total: ', this.gameScore);
 	},
 	moveLetters:function(){
@@ -321,7 +331,9 @@ var gameState = {
 		}
 		this.scoreDisplay.anchor.setTo(0.5);
 		this.scoreDisplay.inputEnabled = true;
+		
 		this.scoreDisplay.events.onInputDown.add(this.changeState, this);
+		this.endButton.events.onInputDown.add(this.changeState, this);
 		
 
 	},
