@@ -9,6 +9,7 @@ var gameState = {
 		this.game.load.image('hold', 'images/placeholder.jpg');
 		this.game.load.image("endButton","images/endButton.png");
 		this.game.load.image('back', 'images/back.png');
+		this.game.load.image('star', 'images/star.png');
 		this.game.load.text("words", "words/words.txt");
 		this.game.load.image("BG", "images/BG.png");
 		this.game.load.image("A", "images/A.png");
@@ -38,11 +39,14 @@ var gameState = {
 		this.game.load.image("Y", "images/Y.png");
 		this.game.load.image("Z", "images/Z.png");
 
+
+
 		this.game.load.audio("ding", "sounds/ding.mp3");
 		this.game.load.audio("win", "sounds/win.mp3");
 		this.game.load.audio('hover', 'sounds/click5.mp3');
 		this.game.load.audio('click', 'sounds/click4.mp3');
 		this.game.load.audio('submit', 'sounds/submit.mp3');
+		this.game.load.audio('back', 'sounds/close.mp3');
 
 		//this.game.load.image('options', 'images/options.png');
 		//this.game.load.image('highScore', 'images/highScore.png');
@@ -62,6 +66,7 @@ var gameState = {
 		this.hoverMp3 = this.game.add.audio('hover');
 		this.clickMp3 = this.game.add.audio('click');
 		this.submitMp3 = this.game.add.audio('submit');
+		this.backMp3 = this.game.add.audio('back');
 
 		this.scoreDisplay = this.game.add.text(1150 , 650, this.gameScore,{font:'40px Arial', fill:'#ffffff'});
 		this.scoreDisplay.anchor.setTo(0.5);
@@ -172,6 +177,7 @@ var gameState = {
 
 },
 	removeLetter:function(){
+		this.backMp3.play();
 		if(this.guessArray.length > 0){
 		var i = this.guessArray.length - 1;
 		target = this.letters.getChildAt(this.guessArray[i]);
@@ -375,6 +381,10 @@ var gameState = {
 			}
 		}			
 	},
+
+	//
+	//TODO this is broken now, copy and pasted the animate function to try and animate the bonus but, not sure what went wrong but need to get back to work
+	//
 	end:function(){
 		
 		console.log('Wrap it up');
@@ -389,39 +399,84 @@ var gameState = {
 		}
 		bonus = 30 - (left * 5);
 		if (bonus < 0){
-			bonus = 0;	
+			//TODO change this back when done testing
+			bonus = 20;	
 		}
 		this.gameScore += bonus;
 		
-		this.displayScore();
+		//this.animateScoreNum = bonus;
+		
+		//this.displayScore();
+
+		this.scoreText.kill();
 		
 		this.letters.removeAll(true);
 
 		this.scoreDisplay.kill();
 
-		this.scoreDisplay = this.game.add.text(this.game.world.centerX , this.game.world.centerY, this.gameScore,{font:'144px Arial', fill:'#ffffff'});
-		this.scoreDisplay.stroke = '#1b0088';
-		this.scoreDisplay.strokeThickness = 10;
-		console.log(this.gameScore);
-		console.log(highScore);
+
+		this.scoreDisplayBonus= this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore,{font:'144px Arial', fill:'#ffffff'});
+		this.scoreDisplayBonus.stroke = '#1b0088';
+		this.scoreDisplayBonus.strokeThickness = 10;
+		this.scoreDisplayBonus.anchor.setTo(0.5);
 
 		if(this.gameScore > highScore){
+		this.highScoreText = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 100, 'New High Score!', {font:'100px Arial', fill:'#ffffff'});
+		this.highScoreText.stroke = '#1b0088';
+		this.highScoreText.strokeThickness = 10;
+		this.highScoreText.anchor.setTo(0.5);
 		highScore = this.gameScore;
 		console.log('updating highScore');
 		this.fanFare.play();
 		}
-		this.scoreDisplay.anchor.setTo(0.5);
-		this.scoreDisplay.inputEnabled = true;
-		this.endButton.kill();
-		this.endButton = this.game.add.sprite(0,0,"endButton");
+		else{
+		this.highScoreText = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 100, 'Your Score:', {font:'100px Arial', fill:'#ffffff'});
+		this.highScoreText.stroke = '#1b0088';
+		this.highScoreText.strokeThickness = 10;
+		this.highScoreText.anchor.setTo(0.5);
+		
+		}
+		
+		//this.animateScoreBonus();
+		//this.scoreDisplay.anchor.setTo(0.5);
+		//this.scoreDisplay
 		this.endButton.inputEnabled = true;
 		this.endButton.events.onInputDown.add(this.changeState, this);
-
-		this.scoreDisplay.events.onInputDown.add(this.changeState, this);
+		
+		this.scoreDisplayBonus.inputEnabled = true;
+		this.scoreDisplayBonus.events.onInputDown.add(this.changeState, this);
 			
 		
 
 	},
+	animateScoreBonus:function(){
+		//TODO I think I have a better way to impliment this, use a for loop and timer.add(displayscore()) or something along those lines
+		console.log('animating');
+		this.game.time.events.loop(Phaser.Timer.QUARTER/4, this.updateTextBonus, this);
+
+			
+
+	},
+	updateTextBonus:function(){
+		this.animateScoreNum--;
+		if(this.animateScoreNum > 0){	
+			
+			this.dingSound.play();
+			this.scoreDisplayBonus.kill();
+			
+			this.scoreDisplayBonus = this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore - this.animateScoreNum,{font:'144px Arial', fill:'#ffffff'});
+
+			this.scoreDisplay.anchor.setTo(0.5);
+			this.scoreDisplay.stroke = '#1b0088';
+			this.scoreDisplay.strokeThickness = 5;
+
+		}
+		else{
+			return;	
+		}
+
+	},
+
 
 	changeState:function(){
 		this.state.start('bootState', true, false, highScore);
