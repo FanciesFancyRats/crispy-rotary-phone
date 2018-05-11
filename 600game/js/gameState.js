@@ -38,6 +38,8 @@ var gameState = {
 		this.game.load.image("X", "images/X.png");
 		this.game.load.image("Y", "images/Y.png");
 		this.game.load.image("Z", "images/Z.png");
+		this.game.load.image('backHover', 'images/backHover.png');
+		this.game.load.image('endHover', 'images/endHover.png');
 
 
 
@@ -78,6 +80,8 @@ var gameState = {
 		this.backButton = this.game.add.sprite(1280 - 240, 0, 'back');
 		this.backButton.inputEnabled = true;
 		this.backButton.events.onInputDown.add(this.removeLetter, this);
+		this.backButton.events.onInputOver.add(this.hoverBack, this);
+		this.backButton.events.onInputOut.add(this.stopHoverBack, this);
 		
 		this.displayScore();
 		this.displayString.events.onInputDown.add(this.submit, this);
@@ -98,6 +102,8 @@ var gameState = {
 		this.endButton = this.game.add.sprite(0,0,"endButton");
 		this.endButton.inputEnabled = true;
 		this.endButton.events.onInputDown.add(this.end, this);
+		this.endButton.events.onInputOver.add(this.hoverEnd, this);
+		this.endButton.events.onInputOut.add(this.stopHoverEnd, this);
 
 		var rawText = game.cache.getText("words");
 		this.dictionary = rawText.split("\n");
@@ -246,6 +252,12 @@ var gameState = {
 			console.log('updating text', this.animateScoreNum);
 		}
 		else{
+			this.scoreDisplay.kill();
+			this.scoreDisplay = this.game.add.text(1150 , 660, this.gameScore,{font:'60px Arial', fill:'#ffffff'});
+			this.scoreDisplay.anchor.setTo(0.5);
+			this.scoreDisplay.stroke = '#1b0088';
+			this.scoreDisplay.strokeThickness = 5;
+
 			return;	
 		}
 
@@ -272,6 +284,7 @@ var gameState = {
 		
 		}	
 		else{
+			this.backMp3.play();
 			this.displayString.kill();	
 			for (i = 0; i < this.guessArray.length; i++){
 				target = this.letters.getChildAt(this.guessArray[i]);
@@ -316,7 +329,7 @@ var gameState = {
 
 		}
 		if(this.displayArray.length > 4){
-			wordScore+=((7*this.displayArray.length+1) - 3*((32/4)-this.displayArray.length+1))
+			wordScore+=wordScore;
 			this.moveLetters();
 
 		}
@@ -386,10 +399,9 @@ var gameState = {
 	//TODO this is broken now, copy and pasted the animate function to try and animate the bonus but, not sure what went wrong but need to get back to work
 	//
 	end:function(){
-		
-		console.log('Wrap it up');
+	//Calculating Bonus	
 		var bonus = 0;
-		
+	//Finding the number of letters unused		
 		var left = 0; 
 		for (i = 0; i < this.hand.length; i++){
 			target = this.letters.getChildAt(i);
@@ -397,84 +409,106 @@ var gameState = {
 				left++;		
 			}
 		}
-		bonus = 30 - (left * 5);
+	//Calculating bonus	
+		bonus = 45 - (left * 5);
 		if (bonus < 0){
-			//TODO change this back when done testing
-			bonus = 20;	
+			bonus = 0;	
 		}
 		this.gameScore += bonus;
 		
-		//this.animateScoreNum = bonus;
+		this.bonusAnimate = bonus;	
 		
-		//this.displayScore();
-
+	//Kill 'Score: '
 		this.scoreText.kill();
-		
+	//Remove Letters		
 		this.letters.removeAll(true);
-
+	//Kill score at bottom right
 		this.scoreDisplay.kill();
 
 
-		this.scoreDisplayBonus= this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore,{font:'144px Arial', fill:'#ffffff'});
+		this.scoreDisplayBonus= this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore - this.bonusAnimate,{font:'144px Arial', fill:'#ffffff'});
 		this.scoreDisplayBonus.stroke = '#1b0088';
 		this.scoreDisplayBonus.strokeThickness = 10;
 		this.scoreDisplayBonus.anchor.setTo(0.5);
 
 		if(this.gameScore > highScore){
-		this.highScoreText = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 100, 'New High Score!', {font:'100px Arial', fill:'#ffffff'});
-		this.highScoreText.stroke = '#1b0088';
-		this.highScoreText.strokeThickness = 10;
-		this.highScoreText.anchor.setTo(0.5);
-		highScore = this.gameScore;
-		console.log('updating highScore');
-		this.fanFare.play();
+			this.highScoreText = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 100, 'New High Score!', {font:'100px Arial', fill:'#ffffff'});
+			this.highScoreText.stroke = '#1b0088';
+			this.highScoreText.strokeThickness = 10;
+			this.highScoreText.anchor.setTo(0.5);
+			highScore = this.gameScore;
+			console.log('updating highScore');
+			this.fanFare.play();
 		}
 		else{
-		this.highScoreText = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 100, 'Your Score:', {font:'100px Arial', fill:'#ffffff'});
-		this.highScoreText.stroke = '#1b0088';
-		this.highScoreText.strokeThickness = 10;
-		this.highScoreText.anchor.setTo(0.5);
-		
+			this.highScoreText = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 100, 'Your Score:', {font:'100px Arial', fill:'#ffffff'});
+			this.highScoreText.stroke = '#1b0088';
+			this.highScoreText.strokeThickness = 10;
+			this.highScoreText.anchor.setTo(0.5);
 		}
-		
-		//this.animateScoreBonus();
-		//this.scoreDisplay.anchor.setTo(0.5);
-		//this.scoreDisplay
+		console.log('this.bonusAnimate: ', this.bonusAnimate);
+		if(this.bonusAnimate > 1){
+			this.bonusText = this.game.add.text(this.game.world.centerX, this.game.world.centerY + 170, left + ' letters left bonus', {font: '60px Arial', fill:'#ffffff'});
+			this.bonusText.anchor.setTo(0.5);
+			this.bonusText.stroke = '#1b0088';
+			this.bonusText.strokeThickness = 10;
+			this.animateScoreBonus();
+
+		}	
+		else{
+			this.scoreDisplayBonus.kill();
+			this.scoreDisplayBonus= this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore,{font:'144px Arial', fill:'#ffffff'});
+			this.scoreDisplayBonus.stroke = '#1b0088';
+			this.scoreDisplayBonus.strokeThickness = 10;
+			this.scoreDisplayBonus.anchor.setTo(0.5);
+			this.scoreDisplayBonus.inputEnabled = true;
+			this.scoreDisplayBonus.events.onInputDown.add(this.changeState, this);
+		}	
+
+
+		this.endButton.kill();
+		this.endButton = this.game.add.sprite(0,0,"endButton");
 		this.endButton.inputEnabled = true;
 		this.endButton.events.onInputDown.add(this.changeState, this);
-		
-		this.scoreDisplayBonus.inputEnabled = true;
-		this.scoreDisplayBonus.events.onInputDown.add(this.changeState, this);
+
+
+		//this.scoreDisplayBonus.kill();	
+		//this.scoreDisplayBonus= this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore,{font:'144px Arial', fill:'#ffffff'});
+		//this.scoreDisplayBonus.inputEnabled = true;
+		//this.scoreDisplayBonus.events.onInputDown.add(this.changeState, this);
 			
 		
 
 	},
 	animateScoreBonus:function(){
-		//TODO I think I have a better way to impliment this, use a for loop and timer.add(displayscore()) or something along those lines
-		console.log('animating');
+		console.log('Animating bonus');
+		console.log(this.gameScore - this.bonusAnimate);
+		
 		this.game.time.events.loop(Phaser.Timer.QUARTER/4, this.updateTextBonus, this);
-
-			
 
 	},
 	updateTextBonus:function(){
-		this.animateScoreNum--;
-		if(this.animateScoreNum > 0){	
-			
+		this.bonusAnimate--;
+		if(this.bonusAnimate > 0){
 			this.dingSound.play();
 			this.scoreDisplayBonus.kill();
-			
-			this.scoreDisplayBonus = this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore - this.animateScoreNum,{font:'144px Arial', fill:'#ffffff'});
-
-			this.scoreDisplay.anchor.setTo(0.5);
-			this.scoreDisplay.stroke = '#1b0088';
-			this.scoreDisplay.strokeThickness = 5;
+			this.scoreDisplayBonus= this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore - this.bonusAnimate ,{font:'144px Arial', fill:'#ffffff'});
+		this.scoreDisplayBonus.stroke = '#1b0088';
+		this.scoreDisplayBonus.strokeThickness = 10;
+		this.scoreDisplayBonus.anchor.setTo(0.5);
 
 		}
 		else{
+			this.scoreDisplayBonus.kill();
+			this.scoreDisplayBonus= this.game.add.text(this.game.world.centerX , this.game.world.centerY + 50, this.gameScore,{font:'144px Arial', fill:'#ffffff'});
+			this.scoreDisplayBonus.stroke = '#1b0088';
+			this.scoreDisplayBonus.strokeThickness = 10;
+			this.scoreDisplayBonus.anchor.setTo(0.5);
+			this.scoreDisplayBonus.inputEnabled = true;
+			this.scoreDisplayBonus.events.onInputDown.add(this.changeState, this);
 			return;	
 		}
-
+		
 	},
 
 
@@ -493,6 +527,20 @@ var gameState = {
 	},
 	stopHoverGuess:function(){
 		this.displayString.strokeThickness = 0;	
+	},
+	hoverEnd:function(){
+		this.hoverMp3.play();
+		this.endButton.loadTexture('endHover', 0);	
+	},
+	stopHoverEnd:function(){
+		this.endButton.loadTexture('endButton', 0);	
+	},
+	hoverBack:function(){
+		this.hoverMp3.play();
+		this.backButton.loadTexture('backHover', 0);	
+	},
+	stopHoverBack:function(){
+		this.backButton.loadTexture('back', 0);	
 	}
 
 
