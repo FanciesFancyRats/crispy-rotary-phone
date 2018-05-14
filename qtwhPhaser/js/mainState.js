@@ -49,7 +49,7 @@ var mainState = {
 			}
 	
 			
-				//This should call to a string variable that will concatinate the next string then make that string and test if it too large, I wonder if I can make a theoretical object without actually creating it to see if I can test that before actually commiting to this.game.add.text
+				//TODO This should call to a string variable that will concatinate the next string then make that string and test if it too large, I wonder if I can make a theoretical object without actually creating it to see if I can test that before actually commiting to this.game.add.text
 		}
 		if(i < textArray.length){
 			console.log(displayString.height*1.5 + y, y + height);
@@ -77,7 +77,7 @@ var mainState = {
 				i++;
 			}
 		}
-		//this isn't working, look up method chaining tommorw and see if you can get a clearer picture I think it's just a matter of getting the syntax right
+		//TODO this isn't working, look up method chaining tommorw and see if you can get a clearer picture I think it's just a matter of getting the syntax right
 		//among other things.
 		console.log('deciding wether or not to recurse');
 		if (i < scriptArray.length){
@@ -102,19 +102,22 @@ var mainState = {
 		this.displayString.kill();
 	},
 	*/
-	//TODO this will do an infinite loop right now...
 	displayScript:function(textBox, scriptArray, postion, style, string, display){
 		display.kill();
 		display = this.game.make.text(textBox.x, textBox.y, string, style);
-		var nextString = string + scriptArray[postion];
+		var nextString = string + scriptArray[postion] + " ";
 		var nextDisplay = this.game.make.text(textBox.x, textBox.y, nextString, style);
 		display.wordWrap = true;
 		display.wordWrapWidth = textBox.width;
 		nextDisplay.wordWrap = true;
 		nextDisplay.wordWrapWidth = textBox.width;
 		if(nextDisplay.height > textBox.height){
-			display = this.game.add(textBox.x, textBox.y, string, style);
+			display = this.game.add.text(textBox.x, textBox.y, string, style);
+			display.wordWrap = true;
+			display.wordWrapWidth = textBox.width;
 			console.log('need to wait for input');
+			textBox.inputEnabled = true;
+			textBox.events.onInputDown.add(this.nextLine, this);
 		}
 		else{
 			postion++;
@@ -122,6 +125,13 @@ var mainState = {
 			display = nextDisplay;
 			this.displayScript(textBox, scriptArray, postion, style, string, display);
 		}
+
+	},
+	nextLine:function(sprite, event){
+		//Might have to just make scriptArray, position, style, and display global, since I can't figure that out right now?
+		console.log('click');		
+		console.log(sprite.x);
+		this.displayScript(sprite, scriptArray, postion, style, string, display);
 
 	}
 
