@@ -11,7 +11,7 @@ var optionState = {
 	create:function(){
 		var style = {font:'60px Arial', fill:'#000'}
 		this.game.add.image(0, 0, 'BG');
-		this.startText = this.game.add.text(20,100, 'start', style);
+		this.startText = this.game.add.text(100,100, 'start', style);
 		this.startText.anchor.setTo(0.5);
 		this.startText.inputEnabled = true;
 		this.startText.events.onInputDown.add(this.switchToMainState, this);
